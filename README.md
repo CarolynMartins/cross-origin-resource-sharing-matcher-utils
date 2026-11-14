@@ -28,3 +28,10 @@ The trade-off: we do not parse or normalize origins. Origins are compared as exa
 ## Edge case you will hit
 
 If the `Access-Control-Allow-Origin` header contains a comma-separated list of origins (which is invalid per the CORS spec), this library treats it as a literal string and will not match any single origin. Similarly, leading or trailing whitespace is not trimmed; the comparison is exact. This is deliberate: the library validates the header value as-is, and callers should ensure the header is well-formed.
+
+## Design notes
+
+The window stores values eagerly rather than keeping running aggregates. Running
+sums drift with floating point over long streams, and recomputing from a small
+buffer is cheap enough that the drift is not worth the speed.
+
